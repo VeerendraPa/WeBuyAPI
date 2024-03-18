@@ -1,39 +1,38 @@
-const express = require('express');
-const https = require('https');
+﻿const express = require('express');
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
+
 // Middleware to set CORS headers
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
-app.use('/', async (req, res) => {
+
+// Proxy route
+app.post('/proxy', async (req, res) => {
     try {
-        const options = {
-            hostname: 'wss2.cex.uk.webuy.io',
-            path: '/v3/supercats',
-            method: 'GET'
-        };
-        const request = https.request(options, response => {
-            let data = '';
-            response.on('data', chunk => {
-                data += chunk;
-            });
-            response.on('end', () => {
-                res.json(JSON.parse(data));
-            });
+        const { default: fetch } = await import('node-fetch'); // Use dynamic import
+        const response = await fetch('https://2etiystoqy2wpnj4b6lptfwpbi0sfnsy.lambda-url.us-west-2.on.aws/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Origin': 'https://stage.webuyexotics.dev'
+            },
+            body: JSON.stringify({
+                user_input: "Hello", 
+                thread_id: ''
+            }),
         });
-        request.on('error', error => {
-            console.error('Proxy request failed:', error);
-            res.status(500).json({ error: 'Proxy request failed' });
-        });
-        request.end();
+        
+        const data = await response.json();
+        res.json(data);
     } catch (error) {
-        console.error('Proxy request failed:', error);
-        res.status(500).json({ error: 'Proxy request failed' });
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Error fetching data' });
     }
 });
-app.listen(port, () => {
-    console.log(`Proxy server listening at http://localhost:${port}`);
+
+app.listen(PORT, () => {
+    console.log(`Proxy server is running on port ${PORT}`);
 });

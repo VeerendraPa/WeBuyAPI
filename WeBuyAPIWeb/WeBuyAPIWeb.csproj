@@ -117,7 +117,7 @@
     <Content Include="MessageRead.css" />
     <Content Include="MessageRead.html" />
     <Content Include="MessageRead.js" />
-    <Content Include="proxy.js" />
+    <Content Include="Functions\proxy.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
     <Content Include="Scripts\jquery-3.6.0.slim.js" />
